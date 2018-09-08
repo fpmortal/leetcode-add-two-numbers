@@ -1,25 +1,18 @@
 package leetcode
 
-import org.json4s.{DefaultFormats, Formats}
-import org.scalatest.{FunSuite, MustMatchers}
-import yspec.YSpec
+import yspec.YSpecSuite
 
-class SolutionTest extends FunSuite with MustMatchers {
+class SolutionTest extends YSpecSuite {
 
-  implicit val formats: Formats = DefaultFormats
-
-  val is = ClassLoader.getSystemResourceAsStream("cases.yaml")
-
-  val spec = YSpec.load[Input, List[Int]](is)
-
-  spec.cases.foreach { tc =>
-    test(tc.id) {
-      val a = listNode(tc.input.a)
-      val b = listNode(tc.input.b)
-
-      new leetcode.Solution().addTwoNumbers(a, b) mustBe listNode(tc.output)
-    }
-  }
+  YSpec
+    .fromResource[Input, List[Int]]("cases.yaml")
+    .run(
+      input => new leetcode.Solution().addTwoNumbers(
+        listNode(input.a),
+        listNode(input.b)
+      ),
+      output => listNode(output)
+    )
 
   private def listNode(ls: List[Int]): ListNode = {
     val ln = new ListNode(ls.head)
